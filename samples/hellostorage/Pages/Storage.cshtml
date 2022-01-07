@@ -1,0 +1,49 @@
+﻿@page
+@using System.Runtime.InteropServices
+@using System.IO
+@using System.Diagnostics
+@using Microsoft.Extensions.Configuration
+@using Azure.Storage.Blobs;
+
+@inject IConfiguration Configuration
+@model IndexModel
+@{
+    ViewData["Title"] = "Home page";
+    string connectionString = @Configuration["StorageConnectionString"];
+    BlobContainerClient container = new BlobContainerClient(connectionString, "demo");
+    container.CreateIfNotExists();
+    var blobs = container.GetBlobs();
+}
+
+<div class="text-center">
+    <h1>Hello Azure Storage</h1>
+</div>
+
+<div align="center">
+    <table class="table table-striped table-hover">
+        <tr>
+            <td>StorageConnectionString</td>
+            <td>@connectionString</td>
+        </tr>
+        
+        <tr>
+            <td style="vertical-align: top">Blobs</td>
+            <td>
+              <table>
+                @{
+                    foreach (var blob in blobs)
+                    {
+                        <tr>
+                        <td>Name:</td>
+                        <td>@blob.Name</td>
+                        <td>CreatedOn:</td>
+                        <td>@blob.Properties.CreatedOn</td>
+                        </tr>
+                    }
+                }
+                </table>
+            </td>
+        </tr>
+    </table>
+    <img src="~/logo.png" width="50%" height="50%"/>
+</div>
